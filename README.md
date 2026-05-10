@@ -66,25 +66,67 @@ This is the approach that works.
 
 This registers LinkedIn as a tool your AI can call directly from chat.
 
-**Step 1 — Install uv**
+**Step 1 — Install uv (the correct way)**
+
+`uv` is a Python package manager — do not install it via `pip`. Use the official installer:
+
+macOS / Linux:
 ```bash
-pip install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+source $HOME/.local/bin/env   # adds uvx to PATH for current session
 ```
 
-**Step 2 — Log in once**
+Windows:
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+Verify it worked:
+```bash
+uvx --version
+```
+
+**Step 2 — Log in to LinkedIn (do this before anything else)**
+
 ```bash
 uvx linkedin-scraper-mcp@latest --login
 ```
-A browser opens. Log into LinkedIn manually. Close it when done. Session is saved.
+
+A real browser window opens. Log into LinkedIn manually — complete any 2FA or CAPTCHA challenge in that window. Wait until the browser closes on its own or shows a success message. Do not close the browser early — the session isn't saved until the login flow finishes fully.
 
 **Step 3 — Register with your AI tool**
 
-Claude Code:
+**Claude Code — terminal CLI** (if `claude` works in your terminal):
 ```bash
 claude mcp add linkedin --scope user -- uvx linkedin-scraper-mcp@latest
 ```
 
-Cursor — add this to your `~/.cursor/mcp.json`:
+Verify it connected:
+```bash
+claude mcp list
+# should show: linkedin: uvx linkedin-scraper-mcp@latest - ✓ Connected
+```
+
+**Claude Code — VSCode extension** (if you use the VSCode extension instead of the CLI):
+
+Create a file called `.mcp.json` in your project root folder:
+```json
+{
+  "mcpServers": {
+    "linkedin": {
+      "command": "uvx",
+      "args": ["linkedin-scraper-mcp@latest"]
+    }
+  }
+}
+```
+Then reload VSCode: `Cmd+Shift+P` → `Developer: Reload Window`
+
+If `uvx` isn't found, use the full path instead:
+- Mac/Linux: `~/.local/bin/uvx`
+- Windows: `%USERPROFILE%\.local\bin\uvx.exe`
+
+**Cursor** — add to `~/.cursor/mcp.json`:
 ```json
 {
   "mcpServers": {
@@ -96,7 +138,7 @@ Cursor — add this to your `~/.cursor/mcp.json`:
 }
 ```
 
-Windsurf — add this to your `~/.codeium/windsurf/mcp_config.json`:
+**Windsurf** — add to `~/.codeium/windsurf/mcp_config.json`:
 ```json
 {
   "mcpServers": {
@@ -154,8 +196,9 @@ FETCH_PROFILES=williamhgates,satya-nadella node login.js
 ### Option C — Python server (standalone or with AI)
 
 **Step 1 — Install dependencies**
+
+Install `uv` using the official installer (see Step 1 in Option A above), then:
 ```bash
-pip install uv
 uv sync
 ```
 
