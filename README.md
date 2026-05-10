@@ -4,6 +4,12 @@ Connecting LinkedIn to a terminal through an MCP (Model Context Protocol) server
 
 It took three attempts to get working. Here's what happened and how to run it yourself.
 
+<p align="center">
+  <img src="assets/mcp_tools.png" width="500"/>
+  <img src="assets/search_result.png" width="500"/>
+  <img src="assets/company_lookup.png" width="500"/>
+</p>
+
 ## What you need
 
 - A LinkedIn account
@@ -173,14 +179,4 @@ Never commit credentials. Use env vars or `.env`. The `linkedin_cookies.json` fi
 
 ## Results
 
-MCP server connected and verified:
-
-![MCP server connected](assets/mcp_tools.png)
-
-LinkedIn people search from terminal:
-
-![LinkedIn search results in terminal](assets/search_result.png)
-
-Profile lookup from terminal:
-
-![Profile lookup from terminal](assets/company_lookup.png)
+MCP server connected, LinkedIn search and profile lookup working directly from terminal. Screenshots above show the full flow end to end.
