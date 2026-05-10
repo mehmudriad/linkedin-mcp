@@ -11,10 +11,12 @@ if (!EMAIL || !PASSWORD) {
   process.exit(1);
 }
 
+// Define target LinkedIn profiles to visit.
+// Replace slugs with the LinkedIn URL path segment for each person
+// e.g. linkedin.com/in/williamhgates → slug is 'williamhgates'
 const TARGETS = [
-  { name: 'Muhammad Bilal', slug: 'bilal54' },
-  { name: 'Jacob Goodstein', slug: 'jacob-goodstein-6b8b37229' },
-  { name: 'Belinda Gerz', slug: 'belinda-gerz' },
+  { name: 'Example Person 1', slug: 'williamhgates' },
+  { name: 'Example Person 2', slug: 'satya-nadella' },
 ];
 
 (async () => {

@@ -59,12 +59,11 @@ if (!EMAIL || !PASSWORD) {
   console.log(`✓ Cookies saved to: ${COOKIES_FILE}`);
 
   // If FETCH_PROFILES env var is set, visit profiles and extract Featured sections
+  // Set FETCH_PROFILES to a comma-separated list of LinkedIn slugs, e.g.:
+  //   FETCH_PROFILES=williamhgates,satya-nadella node login.js
   if (process.env.FETCH_PROFILES) {
-    const targets = [
-      { name: 'Muhammad Bilal', slug: 'bilal54' },
-      { name: 'Jacob Goodstein', slug: 'jacob-goodstein-b8a16a322' },
-      { name: 'Belinda Gerz', slug: 'belindagerz' },
-    ];
+    const slugs = process.env.FETCH_PROFILES.split(',').map(s => s.trim()).filter(Boolean);
+    const targets = slugs.map(slug => ({ name: slug, slug }));
 
     for (const target of targets) {
       console.log(`\n=== ${target.name} ===`);

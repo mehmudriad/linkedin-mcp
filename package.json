@@ -1,13 +1,15 @@
 {
   "name": "linkedin-mcp",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "LinkedIn MCP server — control LinkedIn from your terminal via Claude Code",
+  "main": "login.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "login": "node login.js",
+    "fetch": "node fetch_profiles.js",
+    "scrape": "node scrape_profiles.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["linkedin", "mcp", "puppeteer", "claude", "automation"],
+  "author": "mehmudriad",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {

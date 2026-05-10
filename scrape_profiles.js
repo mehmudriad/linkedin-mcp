@@ -5,10 +5,12 @@ const path = require('path');
 
 const COOKIES_FILE = path.join(__dirname, 'linkedin_cookies.json');
 
+// Define target LinkedIn profiles to scrape.
+// Replace slugs with the LinkedIn URL path segment for each person
+// e.g. linkedin.com/in/williamhgates → slug is 'williamhgates'
 const TARGETS = [
-  { name: 'Muhammad Bilal', slug: 'bilal54' },
-  { name: 'Jacob Goodstein', slug: 'jacob-goodstein' },
-  { name: 'Belinda Gerz', slug: 'belinda-gerz' },
+  { name: 'Example Person 1', slug: 'williamhgates' },
+  { name: 'Example Person 2', slug: 'satya-nadella' },
 ];
 
 (async () => {
