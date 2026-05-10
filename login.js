@@ -25,7 +25,9 @@ if (!EMAIL || !PASSWORD) {
 
   console.log('Navigating to LinkedIn login...');
   await page.goto('https://www.linkedin.com/login', { waitUntil: 'networkidle2' });
+  await page.screenshot({ path: '/tmp/li_login_page.png' });
 
+  await page.waitForSelector('#username', { timeout: 30000 });
   await page.type('#username', EMAIL, { delay: 80 });
   await page.type('#password', PASSWORD, { delay: 80 });
   await page.click('[data-litms-control-urn="login-submit"]');
@@ -55,6 +57,49 @@ if (!EMAIL || !PASSWORD) {
   console.log(`✓ li_at: ${liAt.value.slice(0, 20)}...`);
   console.log(`✓ JSESSIONID: ${jsessionid?.value}`);
   console.log(`✓ Cookies saved to: ${COOKIES_FILE}`);
+
+  // If FETCH_PROFILES env var is set, visit profiles and extract Featured sections
+  if (process.env.FETCH_PROFILES) {
+    const targets = [
+      { name: 'Muhammad Bilal', slug: 'bilal54' },
+      { name: 'Jacob Goodstein', slug: 'jacob-goodstein-b8a16a322' },
+      { name: 'Belinda Gerz', slug: 'belindagerz' },
+    ];
+
+    for (const target of targets) {
+      console.log(`\n=== ${target.name} ===`);
+      await page.goto(`https://www.linkedin.com/in/${target.slug}/`, { waitUntil: 'load', timeout: 30000 });
+      await new Promise(r => setTimeout(r, 3000));
+      console.log('URL:', page.url());
+
+      const featured = await page.evaluate(() => {
+        const results = [];
+        document.querySelectorAll('section').forEach(sec => {
+          const h2 = sec.querySelector('h2');
+          if (h2 && h2.innerText.toLowerCase().includes('featured')) {
+            sec.querySelectorAll('a[href]').forEach(a => {
+              if (a.href && !a.href.includes('linkedin.com/in/')) {
+                results.push({ text: a.innerText.trim().slice(0, 100), href: a.href });
+              }
+            });
+          }
+        });
+        return results;
+      });
+
+      if (featured.length === 0) {
+        console.log('No Featured section found');
+      } else {
+        console.log('Featured:');
+        featured.forEach(f => console.log(' -', f.text, '->', f.href));
+      }
+
+      const screenshotPath = `/tmp/li_${target.slug}.png`;
+      await page.screenshot({ path: screenshotPath, fullPage: true });
+      console.log('Screenshot:', screenshotPath);
+      await new Promise(r => setTimeout(r, 2000));
+    }
+  }
 
   await browser.close();
 })();
