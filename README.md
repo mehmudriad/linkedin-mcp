@@ -5,9 +5,26 @@ Connecting LinkedIn to a terminal through an MCP (Model Context Protocol) server
 It took three attempts to get working. Here's what happened and how to run it yourself.
 
 <p align="center">
-  <img src="assets/mcp_tools.png" width="500"/>
-  <img src="assets/search_result.png" width="500"/>
-  <img src="assets/company_lookup.png" width="500"/>
+
+**Prompt:** `claude mcp list`<br>
+**Result:** LinkedIn MCP server registered and connected — ready to use from terminal
+
+<img src="assets/mcp_tools.png" width="580"/>
+
+<br>
+
+**Prompt:** `search linkedin for mechanical engineers`<br>
+**Result:** 10 real LinkedIn profiles returned — name, job title, company, and location pulled live
+
+<img src="assets/search_result.png" width="580"/>
+
+<br>
+
+**Prompt:** `get the profile of a software engineer at Google`<br>
+**Result:** Full LinkedIn profile data returned directly in the terminal — no browser opened
+
+<img src="assets/company_lookup.png" width="580"/>
+
 </p>
 
 ## What you need
