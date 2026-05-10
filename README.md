@@ -2,6 +2,12 @@
 
 Connecting LinkedIn to a terminal through Claude Code as an MCP server. The goal was to search profiles and companies without touching a browser. It took three attempts to get working.
 
+## Results
+
+![MCP tools registered in Claude Code](assets/mcp_tools.png)
+![Profile search from terminal](assets/search_result.png)
+![Company employee lookup](assets/company_lookup.png)
+
 ## Attempt 1 — Python library (`linkedin-api`)
 
 Started with [`linkedin-api`](https://github.com/tomquirk/linkedin-api), a library that wraps LinkedIn's internal Voyager API. Built `server.py` on top of it using FastMCP and registered it with Claude Code as a tool server.
