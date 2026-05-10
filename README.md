@@ -1,12 +1,19 @@
 # linkedin-mcp
 
-Connecting LinkedIn to a terminal through Claude Code as an MCP server. The goal was to search profiles and companies without touching a browser. It took three attempts to get working.
+Connecting LinkedIn to a terminal through an MCP (Model Context Protocol) server. The goal was to search profiles, browse companies, and interact with LinkedIn without touching a browser — all from the command line.
 
-## Result
+It took three attempts to get working. Here's what happened and how to run it yourself.
 
-![MCP server connected](assets/mcp_tools.png)
-![LinkedIn search results in terminal](assets/search_result.png)
-![Profile lookup from terminal](assets/company_lookup.png)
+## What you need
+
+- A LinkedIn account
+- Python 3.11+ and `uv` (for the Python server)
+- Node.js 18+ and `npm` (for the Puppeteer scripts)
+- An MCP-compatible AI tool — pick one:
+  - [Claude Code](https://claude.ai/code) (what this was built with)
+  - [Cursor](https://cursor.sh) (supports MCP)
+  - [Windsurf](https://codeium.com/windsurf) (supports MCP)
+  - Or no AI at all — the Puppeteer scripts run standalone in any terminal
 
 ## Attempt 1 — Python library (`linkedin-api`)
 
@@ -28,53 +35,122 @@ Login was reliable. The problem was the second step — spinning up a headless P
 
 Found [`stickerdaniel/linkedin-mcp-server`](https://github.com/stickerdaniel/linkedin-mcp-server), an MCP server built specifically for this. It runs through `uvx`, uses Playwright with a persistent browser profile, and keeps the session alive across calls without re-authenticating.
 
-```bash
-claude mcp add linkedin --scope user -- uvx linkedin-scraper-mcp@latest
-```
-
-First run opens a browser for manual login. After that the session persists and Claude Code has full LinkedIn tool access from the terminal.
+This is the approach that works.
 
 ## Setup
 
-**Working MCP server:**
+### Option A — With an AI tool (Claude Code, Cursor, Windsurf)
 
+This registers LinkedIn as a tool your AI can call directly from chat.
+
+**Step 1 — Install uv**
 ```bash
 pip install uv
+```
+
+**Step 2 — Log in once**
+```bash
+uvx linkedin-scraper-mcp@latest --login
+```
+A browser opens. Log into LinkedIn manually. Close it when done. Session is saved.
+
+**Step 3 — Register with your AI tool**
+
+Claude Code:
+```bash
 claude mcp add linkedin --scope user -- uvx linkedin-scraper-mcp@latest
 ```
 
-Log in once when the browser opens. Done.
+Cursor — add this to your `~/.cursor/mcp.json`:
+```json
+{
+  "mcpServers": {
+    "linkedin": {
+      "command": "uvx",
+      "args": ["linkedin-scraper-mcp@latest"]
+    }
+  }
+}
+```
 
-**Puppeteer scripts:**
+Windsurf — add this to your `~/.codeium/windsurf/mcp_config.json`:
+```json
+{
+  "mcpServers": {
+    "linkedin": {
+      "command": "uvx",
+      "args": ["linkedin-scraper-mcp@latest"]
+    }
+  }
+}
+```
 
+**Step 4 — Use it**
+
+Open your AI tool and ask anything:
+- "search linkedin for mechanical engineers in New York"
+- "get the profile for williamhgates on linkedin"
+- "find software engineers at Google on linkedin"
+
+The AI calls the LinkedIn tools and returns real results.
+
+### Option B — No AI, just terminal (Puppeteer scripts)
+
+Use these if you want to run searches directly without an AI tool.
+
+**Step 1 — Install dependencies**
 ```bash
 npm install
+```
 
-# Login and save cookies
+**Step 2 — Login and save cookies**
+```bash
 LINKEDIN_EMAIL="your@email.com" LINKEDIN_PASSWORD="yourpassword" node login.js
+```
+A real browser opens. Log in, solve any CAPTCHA. Cookies saved to `linkedin_cookies.json`.
 
-# Optionally visit profiles right after login
-LINKEDIN_EMAIL="your@email.com" LINKEDIN_PASSWORD="yourpassword" FETCH_PROFILES=williamhgates,satya-nadella node login.js
+**Step 3 — Scrape profiles**
 
-# Headless scrape using saved cookies (edit TARGETS in scrape_profiles.js first)
+Edit the `TARGETS` array in `scrape_profiles.js` with the LinkedIn slugs you want:
+```javascript
+const TARGETS = [
+  { name: 'Person Name', slug: 'their-linkedin-slug' },
+];
+```
+Then run:
+```bash
 node scrape_profiles.js
 ```
 
-**Python server:**
-
+To visit profiles right after login (no separate scrape step):
 ```bash
+LINKEDIN_EMAIL="your@email.com" LINKEDIN_PASSWORD="yourpassword" \
+FETCH_PROFILES=williamhgates,satya-nadella node login.js
+```
+
+### Option C — Python server (standalone or with AI)
+
+**Step 1 — Install dependencies**
+```bash
+pip install uv
 uv sync
 ```
 
-Create a `.env` file (already in `.gitignore`):
+**Step 2 — Set credentials**
+
+Create a `.env` file in the project folder:
 ```
 LINKEDIN_EMAIL=your@email.com
 LINKEDIN_PASSWORD=yourpassword
 ```
 
+**Step 3 — Run**
 ```bash
 uv run python server.py
-# or register with Claude Code:
+```
+
+Or register with an AI tool:
+```bash
 claude mcp add linkedin-py -- uv run python server.py
 ```
 
@@ -85,11 +161,26 @@ server.py           # Python MCP server — FastMCP + linkedin-api (Attempt 1 + 
 login.js            # Puppeteer login — saves cookies, optional profile fetch
 fetch_profiles.js   # Fresh login every run, visits target profiles
 scrape_profiles.js  # Headless scraper using saved cookies from login.js
-pyproject.toml      # Python deps
-package.json        # Node deps
+pyproject.toml      # Python dependencies
+package.json        # Node dependencies
 .gitignore          # Excludes linkedin_cookies.json, .env, node_modules
+assets/             # Screenshots
 ```
 
 ## Security
 
 Never commit credentials. Use env vars or `.env`. The `linkedin_cookies.json` file is gitignored — keep it that way. LinkedIn does not officially support third-party API access.
+
+## Results
+
+MCP server connected and verified:
+
+![MCP server connected](assets/mcp_tools.png)
+
+LinkedIn people search from terminal:
+
+![LinkedIn search results in terminal](assets/search_result.png)
+
+Profile lookup from terminal:
+
+![Profile lookup from terminal](assets/company_lookup.png)
