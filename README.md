@@ -6,6 +6,7 @@ Connecting LinkedIn to a terminal through Claude Code as an MCP server. The goal
 
 ![MCP server connected](assets/mcp_tools.png)
 ![LinkedIn search results in terminal](assets/search_result.png)
+![Profile lookup from terminal](assets/company_lookup.png)
 
 ## Attempt 1 — Python library (`linkedin-api`)
 
