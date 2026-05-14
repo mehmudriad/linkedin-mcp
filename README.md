@@ -4,6 +4,7 @@ I'm a mechanical engineering student. I wanted to search LinkedIn from my termin
 
 It took three attempts. Two failed. One works. Here's the honest story and how to run it.
 
+![LinkedIn in Claude terminal](assets/LINKEDIN_CLAUDE_TERMINAL.png)
 ![MCP tools registered](assets/mcp_tools.png)
 ![Search result from terminal](assets/search_result.png)
 ![Company lookup](assets/company_lookup.png)
